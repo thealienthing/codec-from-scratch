@@ -2,7 +2,11 @@
 
 #include <vector>
 #include <cstdint>
+#include <string>
 
-std::vector<uint8_t> run_length_encode(const char* data, int size);
-std::vector<uint8_t> run_length_decode(const char* data, int size);
-void say_hello();
+typedef std::vector<std::byte> Buffer;
+
+
+Buffer run_length_encode(Buffer data);
+Buffer run_length_decode(Buffer data);
+Buffer bytes_from_string(const std::string& str_in);

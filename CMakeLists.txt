@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.10.0)
 project(codec VERSION 0.1.0 LANGUAGES C CXX)
 
+add_subdirectory(${CMAKE_SOURCE_DIR}/doctest doctest)
+
 set(CODEC_INCLUDE
     include/codec.hpp
 )
@@ -19,5 +21,5 @@ target_include_directories(codec PUBLIC
 )
 
 add_executable(test main.cpp)
-target_link_libraries(test codec)
+target_link_libraries(test codec doctest)
 
