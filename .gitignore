@@ -1,3 +1,4 @@
 decoded.rgb24
 decoded.yuv
 build/
+.cache/

@@ -1,7 +1,5 @@
 #include "codec.hpp"
 #include <iostream>
-#include <memory>
-#include <vector>
 
 Buffer rle(Buffer data)
 {
