@@ -1,12 +1,12 @@
 #pragma once
 
-#include <vector>
+#include "buffer.hpp"
 #include <cstdint>
 #include <string>
+#include <vector>
+#include <iostream>
+#include <cstddef>
 
-typedef std::vector<std::byte> Buffer;
-
-
-Buffer run_length_encode(Buffer data);
-Buffer run_length_decode(Buffer data);
+Buffer rle(Buffer data);
+Buffer rld(Buffer data);
 Buffer bytes_from_string(const std::string& str_in);
