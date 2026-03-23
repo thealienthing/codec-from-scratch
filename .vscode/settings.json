@@ -1,6 +1,7 @@
 {
     "editor.formatOnSave": true,
-    "C_Cpp.clang_format_path": "/home/bstoneking/.nix-profile/bin/clang-format",
+    "C_Cpp.clang_format_path": "${userHome}/.nix-profile/bin/clang-format",
     "C_Cpp.formatting": "clangFormat",
-    "clangd.path": "/home/bstoneking/.nix-profile/bin/clangd"
+    "clangd.path": "${userHome}/.nix-profile/bin/clangd",
+    "cortex-debug.variableUseNaturalFormat": false
 }

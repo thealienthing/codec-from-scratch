@@ -6,11 +6,13 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/doctest doctest)
 set(CODEC_INCLUDE
     include/codec.hpp
     include/buffer.hpp
+    include/huffman.hpp
 )
 
 set(CODEC_SRC
     src/codec.cpp
     src/buffer.cpp
+    src/huffman.cpp
 )
 
 add_library(codec SHARED
