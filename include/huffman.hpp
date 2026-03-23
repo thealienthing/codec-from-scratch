@@ -9,23 +9,27 @@ namespace huff {
 class leaf {
 public:
   leaf(std::byte _val, unsigned long _freq);
-  leaf(const leaf &l);
-  explicit leaf(leaf &&_leaf)
+  leaf(const leaf &l) = delete;
+  leaf(leaf &&_leaf)
       : left(std::move(_leaf.left)), right(std::move(_leaf.right)) {
     val = _leaf.val;
     freq = _leaf.freq;
   }
 
+  void print(int spacing = 0);
+
   std::byte val;
   unsigned long freq;
 
-  std::unique_ptr<leaf *> left;
-  std::unique_ptr<leaf *> right;
+  std::unique_ptr<leaf> left;
+  std::unique_ptr<leaf> right;
 };
 
 class huffman {
 public:
-  huffman(std::list<leaf> leaf_list);
+  huffman(std::list<leaf>* leaf_list);
+  std::unique_ptr<leaf> head;
+  void print();
 };
 
 }; // namespace huff

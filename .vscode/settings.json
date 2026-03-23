@@ -1,7 +1,5 @@
 {
     "editor.formatOnSave": true,
-    "C_Cpp.clang_format_path": "${userHome}/.nix-profile/bin/clang-format",
     "C_Cpp.formatting": "clangFormat",
-    "clangd.path": "${userHome}/.nix-profile/bin/clangd",
     "cortex-debug.variableUseNaturalFormat": false
 }

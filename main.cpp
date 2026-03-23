@@ -47,9 +47,9 @@ TEST_CASE("Testing huffman encoding") {
       }
     }
   }
-  // for (auto i = leaf_list.begin(); i != leaf_list.end(); i++) {
-  //   std::cout << *i << std::endl;
-  // }
+
+  huff::huffman my_huff(&leaf_list);
+  my_huff.print();
 }
 
 TEST_CASE("Testing Run Length Encoding") {
