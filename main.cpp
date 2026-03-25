@@ -10,7 +10,9 @@ const std::string test_file = "video.rgb24";
 const int test_file_size = 53996544;
 
 TEST_CASE("Testing huffman encoding") {
-  const std::string hufftest = "AAAAAABBBBBCCCCDDDEEF";
+  const std::string hufftest =
+      "AAAAAABBDSF:"
+      "LKAJLKSDJFLKJSDLFKJAOAJOAAAAAOFIJAOFJFJAJAOFJAFOAOJFFFBBBCzzzzzzzzzzzzzzzzzzzzzzzzzzCCCDDDEEF";
 
   std::map<std::byte, unsigned long> freq_map;
 

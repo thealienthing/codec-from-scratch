@@ -20,9 +20,6 @@ leaf::leaf(leaf &&_leaf) noexcept
   freq = _leaf.freq;
 }
 leaf::~leaf() {
-  // std::cout << "Delete " << static_cast<char>(val) << ": " << freq <<
-  // std::endl;
-  // std::cout << "Leaves instantiated: " << leaves_instantiated << std::endl;
   leaves_instantiated--;
   left.reset();
   right.reset();
@@ -32,25 +29,14 @@ huffman::huffman(std::list<leaf> *leaf_list) {
 
     auto first =
         std::make_unique<leaf>(std::move(std::move(leaf_list->front())));
-    std::cout << "first leaf: " << std::to_integer<int>(first->val) << "-"
-              << first->freq << std::endl;
     leaf_list->pop_front();
 
     auto second = std::make_unique<leaf>(std::move(leaf_list->front()));
-    std::cout << "second leaf: " << std::to_integer<int>(second->val) << "-"
-              << second->freq << std::endl;
     leaf_list->pop_front();
     leaf new_leaf(std::byte(0), first->freq + second->freq);
 
-    if (first->freq > second->freq) {
-      std::cout << "1" << std::endl;
-      new_leaf.left = std::move(first);
-      new_leaf.right = std::move(second);
-    } else {
-      std::cout << "2" << std::endl;
-      new_leaf.right = std::move(first);
-      new_leaf.left = std::move(second);
-    }
+    new_leaf.right = std::move(first);
+    new_leaf.left = std::move(second);
 
     if (leaf_list->size() != 0) {
       for (auto iter = leaf_list->begin(); iter != leaf_list->end(); iter++) {
@@ -75,13 +61,13 @@ huffman::~huffman() {
 }
 
 void leaf::print(int spacing) {
-  std::cout << std::to_integer<int>(val) << ": " << freq << std::endl;
+  std::cout << static_cast<char>(val) << "-" << freq << std::endl;
   if (left != nullptr) {
-    std::cout << std::string(spacing, ' ') << "left: ";
+    std::cout << std::string(spacing, ' ') << "l: ";
     left->print(spacing + 2);
   }
   if (right != nullptr) {
-    std::cout << std::string(spacing, ' ') << "right: ";
+    std::cout << std::string(spacing, ' ') << "r: ";
     right->print(spacing + 2);
   }
 }
