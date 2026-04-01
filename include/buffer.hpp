@@ -9,6 +9,7 @@ public:
   Buffer() {}
   explicit Buffer(const std::string &str_in);
   explicit Buffer(std::vector<std::byte> &&_data) : buffer(std::move(_data)) {}
+
   std::size_t size() const { return buffer.size(); }
   std::byte *data() { return buffer.data(); }
   const std::byte &operator[](int index) { return buffer[index]; }

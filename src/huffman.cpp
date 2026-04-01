@@ -39,6 +39,7 @@ huffman::huffman(std::list<leaf> *leaf_list) {
     new_leaf.left = std::move(second);
 
     if (leaf_list->size() != 0) {
+      
       for (auto iter = leaf_list->begin(); iter != leaf_list->end(); iter++) {
         if (new_leaf.freq <= iter->freq) {
           leaf_list->insert(iter, std::move(new_leaf));
