@@ -1,27 +1,21 @@
-# shell.nix
 { pkgs ? import <nixpkgs> {} }:
 
+let
+  project = import ./default.nix { inherit pkgs; };
+in
 pkgs.mkShell {
-  # List the packages you need for development
-  packages = [
-    pkgs.clang # The GNU C++ compiler
-    pkgs.clang-tools
-    pkgs.cmake # CMake build system generator
-    # Add other C++ libraries here, e.g., pkgs.boost, pkgs.opencv
+  # Pulls in everything from buildInputs and nativeBuildInputs in default.nix
+  inputsFrom = [ project ];
+
+  # Extra tools for development only
+  packages = with pkgs; [
+    clang
+    clang-tools # provides clangd for LSP
   ];
 
-  buildInputs = [
-    pkgs.magic-enum
-    pkgs.spdlog
-    pkgs.doctest
-  ];
-
-  nativeBuildInputs = [
-    pkgs.cmake
-  ];
-
-  # Environment variables or commands to run when entering the shell
   shellHook = ''
-    echo "Welcome to the Nix C++ development shell!"
+    echo "--- C++ Development Environment Loaded ---"
+    echo "Dependencies: spdlog, doctest, magic-enum"
+    cmake --version
   '';
 }
