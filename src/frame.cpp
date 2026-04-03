@@ -27,8 +27,47 @@ FrameFileReader::FrameFileReader(std::string file_path) {
 uint64_t FrameFileReader::Size() { return file_size; }
 
 bool RGBToYUV420(Frame &rgb, Frame &yuv) {
-  // YUV conversion steps
-  return false;
+  // if ((rgb.width != yuv.width) || (rgb.height != yuv.height)) {
+  //   spdlog::error("input frame resolution {}x{} does not match output frame "
+  //                 "resolution {}x{}",
+  //                 rgb.width, rgb.height, yuv.width, yuv.height);
+  //   return false;
+  // }
+
+  for (auto y = 0; y < rgb.height; y += 2) { // skip a row each iter
+    for (auto x = (rgb.num_channels * rgb.width * y);
+         x < (rgb.num_channels * rgb.width * (y + 1));
+         x += 2 * rgb.num_channels) {
+      auto row1 = x;
+      auto row2 = x + (rgb.num_channels * rgb.width);
+
+      auto r = rgb.buffer[row1];
+      auto g = rgb.buffer[row1 + 1];
+      auto b = rgb.buffer[row1 + 2];
+      auto y = (kR * r) + (kG * g) + (kB * b);
+      yuv.buffer[row1 / 3] = y;
+
+      r = rgb.buffer[row1 + 3];
+      g = rgb.buffer[row1 + 4];
+      b = rgb.buffer[row1 + 5];
+      y = (kR * r) + (kG * g) + (kB * b);
+      yuv.buffer[(row1 / 3) + 1] = y;
+
+      r = rgb.buffer[row2];
+      g = rgb.buffer[row2 + 1];
+      b = rgb.buffer[row2 + 2];
+      y = (kR * r) + (kG * g) + (kB * b);
+      yuv.buffer[row2 / 3] = y;
+
+      r = rgb.buffer[row2 + 3];
+      g = rgb.buffer[row2 + 4];
+      b = rgb.buffer[row2 + 5];
+      y = (kR * r) + (kG * g) + (kB * b);
+      yuv.buffer[(row2 / 3) + 3] = y;
+    }
+  }
+
+  return true;
 }
 
 bool FrameFileReader::ReadIntoFrame(Frame &f) {

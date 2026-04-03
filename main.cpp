@@ -28,21 +28,29 @@ int main(int argc, char *argv[]) {
   SDL_CreateWindowAndRenderer("SDL3 Array to Window", width, height, 0, &window,
                               &renderer);
 
-  // 1. Create a streaming texture (using RGBA8888 format)
-  SDL_Texture *texture =
-      SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGB24,
-                        SDL_TEXTUREACCESS_STREAMING, width, height);
-
   int fps = 30;
   int ms_per_frame = 1000 / fps;
   bool running = true;
 
   Frame f(PixelFormat::RGB24, width, height);
+  Frame yuv(PixelFormat::YUV420, width / 2, height / 2);
   FrameFileReader vid_file(file_path);
+
+  // 1. Create a streaming texture (using RGBA8888 format)
+  // SDL_PIXELFORMAT_IYUV
+  // SDL_Texture *texture =
+  //     SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGB24,
+  //                       SDL_TEXTUREACCESS_STREAMING, width, height);
+
+  SDL_Texture *texture =
+      SDL_CreateTexture(renderer, SDL_PIXELFORMAT_IYUV,
+                        SDL_TEXTUREACCESS_STREAMING, width, height);
   while (running) {
     SDL_Event event;
     SDL_PollEvent(&event);
     if (event.type == SDL_EVENT_QUIT) {
+      running = false;
+    } else if (event.type == SDL_EVENT_KEY_DOWN) {
       running = false;
     }
     // Try reading file into frame
@@ -50,6 +58,10 @@ int main(int argc, char *argv[]) {
     if (vid_file.ReadIntoFrame(f)) {
       // 3.a. Process the frame to final display pixel format
       // Operation to measure
+
+      if (RGBToYUV420(f, yuv)) {
+        spdlog::info("Converted YUV");
+      }
 
       // Calculate the difference
       auto end = std::chrono::steady_clock::now();
@@ -60,7 +72,8 @@ int main(int argc, char *argv[]) {
       // stable fps
       SDL_Delay(ms_per_frame - diff.count());
 
-      SDL_UpdateTexture(texture, NULL, f.buffer.get(), width * 3);
+      // SDL_UpdateTexture(texture, NULL, f.buffer.get(), f.size_bytes);
+      SDL_UpdateTexture(texture, NULL, yuv.buffer.get(), yuv.size_bytes);
       // 3.b. Update the texture with the array
     } else {
       running = false;

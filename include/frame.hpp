@@ -8,6 +8,11 @@
 #include <magic_enum/magic_enum.hpp>
 #include <memory>
 
+// ITU-R recommendation BT.601 yuv constants
+const double kR = 0.299;
+const double kG = 0.587;
+const double kB = 0.114;
+
 enum class PixelFormat { RGB24, YUV420 };
 std::ostream &operator<<(std::ostream &os, const PixelFormat &px) {
   return os << magic_enum::enum_name(px);
