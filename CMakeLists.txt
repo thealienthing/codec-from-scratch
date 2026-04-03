@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(spdlog CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
+find_package(SDL3 CONFIG REQUIRED)
 
 set(MAGIC_ENUM_INCLUDE_DIR magic_enum/include)
 
@@ -48,4 +49,5 @@ target_link_libraries(main
     codec
     spdlog::spdlog
     fmt::fmt
+    SDL3::SDL3
 )

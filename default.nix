@@ -15,6 +15,7 @@ pkgs.stdenv.mkDerivation {
     spdlog
     doctest
     fmt
+    sdl3
   ];
 
   cmakeFlags = [

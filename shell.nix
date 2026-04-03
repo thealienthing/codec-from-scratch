@@ -16,6 +16,7 @@ pkgs.mkShell {
   shellHook = ''
     echo "--- C++ Development Environment Loaded ---"
     echo "Dependencies: spdlog, doctest, magic-enum"
+    export CMAKE_PREFIX_PATH=/nix/store/bh3mwkp6sr153rpxh5sdmll5jls4i7pb-sdl3-3.4.0-dev
     cmake --version
   '';
 }
