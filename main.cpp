@@ -1,4 +1,5 @@
 #include "include/frame.hpp"
+#include <chrono>
 #include <frame.hpp>
 #include <spdlog/cfg/env.h>
 #include <spdlog/common.h>
@@ -39,18 +40,28 @@ int main(int argc, char *argv[]) {
   Frame f(PixelFormat::RGB24, width, height);
   FrameFileReader vid_file(file_path);
   while (running) {
-    SDL_Delay(ms_per_frame);
     SDL_Event event;
     SDL_PollEvent(&event);
     if (event.type == SDL_EVENT_QUIT) {
       running = false;
     }
     // Try reading file into frame
+    auto start = std::chrono::steady_clock::now();
     if (vid_file.ReadIntoFrame(f)) {
       // 3.a. Process the frame to final display pixel format
+      // Operation to measure
 
-      // 3.b. Update the texture with the array
+      // Calculate the difference
+      auto end = std::chrono::steady_clock::now();
+      auto diff =
+          std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+
+      // Wait the remaining amount of time before rendering frame to ensure
+      // stable fps
+      SDL_Delay(ms_per_frame - diff.count());
+
       SDL_UpdateTexture(texture, NULL, f.buffer.get(), width * 3);
+      // 3.b. Update the texture with the array
     } else {
       running = false;
     }
