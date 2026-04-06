@@ -35,6 +35,7 @@ target_include_directories(codec PUBLIC
     ${MAGIC_ENUM_INCLUDE_DIR}
 )
 
+target_compile_options(codec PRIVATE -O0)
 target_link_libraries(codec PRIVATE spdlog::spdlog)
 
 add_executable(test tests.cpp)
@@ -45,6 +46,7 @@ target_link_libraries(test
 )
 
 add_executable(main main.cpp)
+target_compile_options(main PRIVATE -O0)
 target_link_libraries(main
     codec
     spdlog::spdlog

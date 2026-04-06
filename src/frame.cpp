@@ -4,9 +4,9 @@
 Frame::Frame(PixelFormat _format, uint64_t _width, uint64_t _height)
     : format(_format), width(_width), height(_height),
       num_channels(GetNumChannels(_format)),
-      size_bytes(num_channels * width * height) {
+      size_bytes(GetSizeBytes(_width, _height, _format)) {
   spdlog::debug("Frame Created: {}", magic_enum::enum_name(format));
-  buffer = std::make_unique<uint8_t[]>(static_cast<size_t>(size_bytes));
+  buffer = std::make_unique<uint8_t[]>(size_bytes);
 }
 
 FrameFileReader::FrameFileReader(std::string file_path) {
@@ -28,42 +28,73 @@ uint64_t FrameFileReader::Size() { return file_size; }
 
 bool RGBToYUV420(Frame &rgb, Frame &yuv) {
   // if ((rgb.width != yuv.width) || (rgb.height != yuv.height)) {
-  //   spdlog::error("input frame resolution {}x{} does not match output frame "
+  //   spdlog::error("input frame resolution {}x{} does not match output frame
+  //   "
   //                 "resolution {}x{}",
   //                 rgb.width, rgb.height, yuv.width, yuv.height);
   //   return false;
   // }
 
-  for (auto y = 0; y < rgb.height; y += 2) { // skip a row each iter
-    for (auto x = (rgb.num_channels * rgb.width * y);
-         x < (rgb.num_channels * rgb.width * (y + 1));
-         x += 2 * rgb.num_channels) {
-      auto row1 = x;
-      auto row2 = x + (rgb.num_channels * rgb.width);
+  auto row_len = rgb.num_channels * rgb.width;
 
-      auto r = rgb.buffer[row1];
-      auto g = rgb.buffer[row1 + 1];
-      auto b = rgb.buffer[row1 + 2];
-      auto y = (kR * r) + (kG * g) + (kB * b);
+  uint8_t *u_ptr = &yuv.buffer[rgb.width * rgb.height];
+  uint8_t *v_ptr = u_ptr + ((yuv.width / 2) * (yuv.height / 2));
+  int pixel = 0;
+  for (auto y = 0; y < rgb.height; y += 2) { // skip a row each iter
+    auto row_start = row_len * y;
+    for (auto x = 0; x < row_len; x += rgb.num_channels * 2) {
+
+      auto row1 = row_start + x;
+      auto row2 = row1 + row_len;
+
+      uint8_t r = rgb.buffer[row1];
+      uint8_t g = rgb.buffer[row1 + 1];
+      uint8_t b = rgb.buffer[row1 + 2];
+      // C b = 0.564( B − Y )
+      // Cr =0.713(R−Y)
+      double y = (kR * r) + (kG * g) + (kB * b);
+      auto cb = 0.564 * (b - y);
+      auto cr = 0.713 * (r - y);
+      uint32_t u = cb;
+      uint32_t v = cr;
       yuv.buffer[row1 / 3] = y;
 
       r = rgb.buffer[row1 + 3];
       g = rgb.buffer[row1 + 4];
       b = rgb.buffer[row1 + 5];
       y = (kR * r) + (kG * g) + (kB * b);
-      yuv.buffer[(row1 / 3) + 1] = y;
+
+      cb = 0.564 * (b - y);
+      cr = 0.713 * (r - y);
+      u += cb;
+      v += cr;
+      yuv.buffer[row1 / 3 + 1] = y;
 
       r = rgb.buffer[row2];
       g = rgb.buffer[row2 + 1];
       b = rgb.buffer[row2 + 2];
       y = (kR * r) + (kG * g) + (kB * b);
+      cb = 0.564 * (b - y);
+      cr = 0.713 * (r - y);
+      u += cb;
+      v += cr;
       yuv.buffer[row2 / 3] = y;
 
       r = rgb.buffer[row2 + 3];
       g = rgb.buffer[row2 + 4];
       b = rgb.buffer[row2 + 5];
       y = (kR * r) + (kG * g) + (kB * b);
-      yuv.buffer[(row2 / 3) + 3] = y;
+      cb = 0.564 * (b - y);
+      cr = 0.713 * (r - y);
+      u += cb;
+      v += cr;
+      yuv.buffer[row2 / 3 + 1] = y;
+      u /= 4;
+      v /= 4;
+      u_ptr[pixel / 2] = static_cast<uint8_t>(255);
+      auto bbbbb = yuv.width * yuv.height / 4;
+      u_ptr[bbbbb + pixel] = static_cast<uint8_t>(255);
+      pixel++;
     }
   }
 

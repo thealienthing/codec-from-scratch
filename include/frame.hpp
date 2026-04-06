@@ -28,6 +28,17 @@ int GetNumChannels(PixelFormat f) {
   }
 }
 
+uint64_t GetSizeBytes(uint64_t width, uint64_t height, PixelFormat f) {
+  switch (f) {
+  case PixelFormat::RGB24:
+    return 3 * width * height;
+  case PixelFormat::YUV420:
+    return (width * height * 3) / 2;
+  default:
+    return 3 * width * height;
+  }
+}
+
 class Frame {
 public:
   Frame(PixelFormat _format, uint64_t _width, uint64_t _height);

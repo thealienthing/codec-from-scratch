@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
   bool running = true;
 
   Frame f(PixelFormat::RGB24, width, height);
-  Frame yuv(PixelFormat::YUV420, width / 2, height / 2);
+  Frame yuv(PixelFormat::YUV420, width, height);
   FrameFileReader vid_file(file_path);
 
   // 1. Create a streaming texture (using RGBA8888 format)
@@ -59,8 +59,8 @@ int main(int argc, char *argv[]) {
       // 3.a. Process the frame to final display pixel format
       // Operation to measure
 
-      if (RGBToYUV420(f, yuv)) {
-        spdlog::info("Converted YUV");
+      if (!RGBToYUV420(f, yuv)) {
+        spdlog::info("Failed to convert to YUV");
       }
 
       // Calculate the difference
@@ -72,8 +72,9 @@ int main(int argc, char *argv[]) {
       // stable fps
       SDL_Delay(ms_per_frame - diff.count());
 
-      // SDL_UpdateTexture(texture, NULL, f.buffer.get(), f.size_bytes);
-      SDL_UpdateTexture(texture, NULL, yuv.buffer.get(), yuv.size_bytes);
+      // SDL_UpdateTexture(texture, NULL, f.buffer.get(),
+      //                   f.width * f.num_channels);
+      SDL_UpdateTexture(texture, NULL, yuv.buffer.get(), width);
       // 3.b. Update the texture with the array
     } else {
       running = false;
